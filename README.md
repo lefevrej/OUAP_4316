@@ -7,4 +7,4 @@ This course is an introduction to Android in Kotlin.
 * [Session1] Android introduction
 
 [//]: # (Lessons links)
-[Session1]: https://github.com/lefevrej/OUAP_4316/session_1
+[Session1]: https://github.com/lefevrej/OUAP_4316/tree/master/session_1

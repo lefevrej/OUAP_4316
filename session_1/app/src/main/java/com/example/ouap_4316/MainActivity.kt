@@ -2,11 +2,12 @@ package com.example.ouap_4316
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener{
     val TAG: String = "MAIN ACTIVITY"
     val names = listOf<String>("Gradur", "Heuss l'enfoiré", "VALD", "Naza", "JUL")
 
@@ -56,5 +57,9 @@ class MainActivity : AppCompatActivity() {
             //textView.text = textView.text.toString().plus('E') // 4
         }
 
+    }
+
+    override fun onClick(v: View?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
