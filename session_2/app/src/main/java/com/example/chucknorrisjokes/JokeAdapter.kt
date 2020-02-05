@@ -11,10 +11,10 @@ class JokeAdapter(private val jokes: List<String>) :
     class JokeViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeViewHolder {
-        /*val textView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.joke_card, parent, false) as TextView*/
+        val textView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.joke_layout, parent, false) as TextView
 
-        return JokeViewHolder(TextView(parent.context))
+        return JokeViewHolder(textView)
     }
     override fun getItemCount(): Int {
         return jokes.size
