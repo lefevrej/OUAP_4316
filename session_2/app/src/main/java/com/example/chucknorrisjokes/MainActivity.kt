@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         viewManager = LinearLayoutManager(this)
-        //viewAdapter = JokesAdapter(ChuckJokes.jokes)
+        //viewAdapter = Jokesdapter(ChuckJokes.jokes)
 
 
         ChuckJokes.jokes.forEach{Log.wtf("Joke", it)}
