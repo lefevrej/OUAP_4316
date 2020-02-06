@@ -2,7 +2,7 @@ package com.example.chucknorrisjokes
 
 class ChuckJokes{
     companion object{
-        val jokes = listOf<String>("A woman wanted to commit suicide so she gave Chuck Norris a blow job.",
+        val jokes = listOf("A woman wanted to commit suicide so she gave Chuck Norris a blow job.",
             "Chuck Norris once had a wrestling match with a condom. The condom tapped out.",
             "Chuck Norris once encountered a man drinking a XX beer. Since then the man has been known as the most interesting man in the world because Chuck let him live.",
             "All ten of Chuck Norris' fingers are middle fingers.",

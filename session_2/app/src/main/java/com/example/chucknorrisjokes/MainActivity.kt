@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         viewAdapter = JokeAdapter(ChuckJokes.jokes)
 
+
         joke_list.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
