@@ -16,13 +16,10 @@ class JokeAdapter(private val jokes: List<String>) :
             .inflate(R.layout.joke_layout, parent, false) as LinearLayout
         return JokeViewHolder(linearLayout)
     }
-    override fun getItemCount(): Int {
-        return jokes.size
-    }
+
+    override fun getItemCount(): Int = jokes.size
 
     override fun onBindViewHolder(holder: JokeViewHolder, position: Int) {
         holder.linearLayout.joke_text.text = jokes[position]
     }
-
-
 }

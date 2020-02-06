@@ -1,7 +1,6 @@
 package com.example.chucknorrisjokes
 
-class ChuckJokes{
-    companion object{
+object ChuckJokes{
         val jokes = listOf("A woman wanted to commit suicide so she gave Chuck Norris a blow job.",
             "Chuck Norris once had a wrestling match with a condom. The condom tapped out.",
             "Chuck Norris once encountered a man drinking a XX beer. Since then the man has been known as the most interesting man in the world because Chuck let him live.",
@@ -12,5 +11,4 @@ class ChuckJokes{
             "Those aren't credits that roll after Walker Texas Ranger. It is actually a list of fatalities that occurred during the making of the episode.",
             "Under Armour asked Chuck Norris to protect their house",
             "Peter Pan once woke-up Chuck Norris at 5:00 AM in the morning. As a result, Cuck Norris made Pancakes for breakfast.")
-    }
 }

@@ -11,7 +11,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -23,9 +22,10 @@ class MainActivity : AppCompatActivity() {
         joke_list.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
-            adapter = viewAdapter }
+            adapter = viewAdapter
+        }
 
 
-        ChuckJokes.jokes.forEach{Log.wtf("Joke", it)}
+        ChuckJokes.jokes.forEach { Log.wtf("Joke", it) }
     }
 }
