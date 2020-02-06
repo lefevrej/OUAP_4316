@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewAdapter: JokeAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,8 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = JokeAdapter(ChuckJokes.jokes)
-
+        viewAdapter = JokeAdapter()
 
         joke_list.apply {
             setHasFixedSize(true)
@@ -25,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-
+        viewAdapter.jokes = ChuckJokes.jokes
         ChuckJokes.jokes.forEach { Log.wtf("Joke", it) }
     }
 }

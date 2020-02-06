@@ -1,13 +1,21 @@
 package com.example.chucknorrisjokes
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.joke_layout.view.*
 
-class JokeAdapter(private val jokes: List<String>) :
+class JokeAdapter:
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
+
+    var jokes: List<String> = listOf()
+        set(value){
+            field = value
+            notifyDataSetChanged()
+            Log.wtf("JOKE_ADAPTER", "dataset changed")
+        }
 
     class JokeViewHolder(val linearLayout: LinearLayout) : RecyclerView.ViewHolder(linearLayout)
 
