@@ -1,6 +1,5 @@
 package com.example.chucknorrisjokes
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -10,12 +9,13 @@ import kotlinx.android.synthetic.main.joke_layout.view.*
 class JokeAdapter:
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
 
-    var jokes: List<String> = listOf()
-        set(value){
-            field = value
-            notifyDataSetChanged()
-            Log.wtf("JOKE_ADAPTER", "dataset changed")
-        }
+    private val jokes: MutableList<String> = mutableListOf()
+
+    fun setData(data: List<String>){
+        jokes.clear()
+        jokes.addAll(data)
+        notifyDataSetChanged()
+    }
 
     class JokeViewHolder(val linearLayout: LinearLayout) : RecyclerView.ViewHolder(linearLayout)
 

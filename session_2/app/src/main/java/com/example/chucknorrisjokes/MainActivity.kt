@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-        viewAdapter.jokes = ChuckJokes.jokes
+        viewAdapter.setData(ChuckJokes.jokes)
         ChuckJokes.jokes.forEach { Log.wtf("Joke", it) }
     }
 }
