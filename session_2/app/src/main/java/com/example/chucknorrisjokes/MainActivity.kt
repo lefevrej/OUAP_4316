@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -25,6 +26,9 @@ class MainActivity : AppCompatActivity() {
             layoutManager = viewManager
             adapter = viewAdapter
         }
+
+        val service = JokeApiServiceFactory().createService()
+        val joke: Single<Joke> = service.giveMeAJoke()
 
         val jokes: List<Joke> = ChuckJokes.jokes.map{Json(JsonConfiguration.Stable).parse(Joke.serializer(), it)}
         viewAdapter.setData(jokes)
