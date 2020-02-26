@@ -9,9 +9,9 @@ import kotlinx.android.synthetic.main.joke_layout.view.*
 class JokeAdapter:
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
 
-    private val jokes: MutableList<String> = mutableListOf()
+    private val jokes: MutableList<Joke> = mutableListOf()
 
-    fun setData(data: List<String>){
+    fun setData(data: List<Joke>){
         jokes.clear()
         jokes.addAll(data)
         notifyDataSetChanged()
@@ -28,6 +28,6 @@ class JokeAdapter:
     override fun getItemCount(): Int = jokes.size
 
     override fun onBindViewHolder(holder: JokeViewHolder, position: Int) {
-        holder.linearLayout.joke_text.text = jokes[position]
+        holder.linearLayout.joke_text.text = jokes[position].value
     }
 }

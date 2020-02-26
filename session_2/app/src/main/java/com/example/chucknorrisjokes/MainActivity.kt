@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewAdapter: JokeAdapter
@@ -24,7 +26,8 @@ class MainActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-        viewAdapter.setData(ChuckJokes.jokes)
+        val jokes: List<Joke> = ChuckJokes.jokes.map{Json(JsonConfiguration.Stable).parse(Joke.serializer(), it)}
+        viewAdapter.setData(jokes)
         ChuckJokes.jokes.forEach { Log.wtf("Joke", it) }
     }
 }
