@@ -1,9 +1,10 @@
 package com.example.chucknorrisjokes
 
+import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.http.GET
 
-interface JokeService {
+interface JokeApiService {
         @GET("random/")
-        fun requestJoke(): Call<Joke>
+        fun giveMeAJoke(): Single<Joke>
 }

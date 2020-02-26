@@ -1,8 +1,5 @@
 package com.example.chucknorrisjokes
 
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -12,12 +9,12 @@ class JokeServiceFactory {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val service: JokeService = retrofit.create<JokeService>(JokeService::class.java)
+    val service: JokeApiService = retrofit.create<JokeApiService>(JokeApiService::class.java)
 }
 
 fun main() {
-    val jokeFactory = JokeServiceFactory()
-    val jokeCall = jokeFactory.service.requestJoke()
+    /*val jokeFactory = JokeServiceFactory()
+    val jokeCall = jokeFactory.service.giveMeAJoke()
     jokeCall.enqueue(object : Callback<Joke> {
         override fun onResponse(call: Call<Joke>, response: Response<Joke>) {
             val joke = response.body()
@@ -29,9 +26,5 @@ fun main() {
         override fun onFailure(call: Call<Joke>, t: Throwable) {
             println("Error : $t")
         }
-    })
+    })*/
 }
-
-
-
-
