@@ -1,11 +1,14 @@
 package com.example.chucknorrisjokes
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.Single
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -28,10 +31,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         val service = JokeApiServiceFactory().createService()
-        val joke: Single<Joke> = service.giveMeAJoke()
+        val singleJoke: Single<Joke> = service.giveMeAJoke()
+        singleJoke
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribeBy(
+                onError = { e -> Log.wtf("Request", e) },
+                onSuccess = { joke: Joke -> Log.wtf("Joke", joke.value) }
+            )
 
-        val jokes: List<Joke> = ChuckJokes.jokes.map{Json(JsonConfiguration.Stable).parse(Joke.serializer(), it)}
+        val jokes: List<Joke> =
+            ChuckJokes.jokes.map { Json(JsonConfiguration.Stable).parse(Joke.serializer(), it) }
         viewAdapter.setData(jokes)
-        ChuckJokes.jokes.forEach { Log.wtf("Joke", it) }
     }
 }
