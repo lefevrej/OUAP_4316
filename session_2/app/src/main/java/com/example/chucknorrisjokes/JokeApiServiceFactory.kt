@@ -1,15 +1,16 @@
 package com.example.chucknorrisjokes
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class JokeServiceFactory {
-    val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.chucknorris.io/jokes/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    val service: JokeApiService = retrofit.create<JokeApiService>(JokeApiService::class.java)
+class JokeApiServiceFactory {
+    fun createService(): JokeApiService =  Retrofit.Builder()
+            .baseUrl("https://api.chucknorris.io/jokes/")
+            .addConverterFactory(Json.asConverterFactory(MediaType.get("application/json")))
+            .build()
+            .create(JokeApiService::class.java)
 }
 
 fun main() {
