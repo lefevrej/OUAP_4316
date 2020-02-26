@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class JokeServiceFactory {
-    val retrofit = Retrofit.Builder()
+    val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl("https://api.chucknorris.io/jokes/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
