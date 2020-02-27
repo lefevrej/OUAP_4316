@@ -1,6 +1,5 @@
-package com.example.chucknorrisjokes
+package com.lefevrej.chucknorrisjokes
 
-import com.lefevrej.chucknorrisjokes.Joke
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import org.junit.Assert

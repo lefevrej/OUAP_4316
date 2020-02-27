@@ -6,14 +6,20 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chucknorrisjokes.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import kotlinx.serialization.list
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val JOKES_KEY = "JOKES_KEY"
+    }
+
     private lateinit var viewAdapter: JokeAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -39,7 +45,28 @@ class MainActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-        getJoke()
+        if (savedInstanceState != null) {
+            jokes.addAll(
+                savedInstanceState.getString(
+                    JOKES_KEY
+                )?.let {
+                    Json(JsonConfiguration.Stable).parse(
+                        Joke.serializer().list,
+                        it
+                    )
+                }!!
+            )
+            viewAdapter.setData(jokes)
+        } else
+            getJoke()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(
+            JOKES_KEY,
+            Json(JsonConfiguration.Stable).stringify(Joke.serializer().list, jokes)
+        )
+        super.onSaveInstanceState(outState)
     }
 
     private fun getJoke() {

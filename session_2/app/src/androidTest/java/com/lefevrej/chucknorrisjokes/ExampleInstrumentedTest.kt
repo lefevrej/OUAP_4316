@@ -1,4 +1,4 @@
-package com.example.chucknorrisjokes
+package com.lefevrej.chucknorrisjokes
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
