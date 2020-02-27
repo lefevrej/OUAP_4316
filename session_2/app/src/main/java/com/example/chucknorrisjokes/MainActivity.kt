@@ -36,9 +36,8 @@ class MainActivity : AppCompatActivity() {
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        button.setOnClickListener {
-            getJoke()
-        }
+
+        getJoke()
     }
 
     private fun getJoke() {
@@ -48,15 +47,14 @@ class MainActivity : AppCompatActivity() {
             .doOnSubscribe {
                 progressBar.visibility = View.VISIBLE
             }
+            .repeat(10)
             .doAfterTerminate {
                 progressBar.visibility = View.GONE
             }
             .subscribeBy(
-                onError = { e -> Log.wtf("Request", e) },
-                onSuccess = { joke: Joke ->
-                    jokes.add(joke)
-                    viewAdapter.setData(jokes)
-                }
+                onError = { e -> Log.wtf("Request error", e) },
+                onNext = { joke: Joke -> jokes.add(joke) },
+                onComplete = { viewAdapter.setData(jokes) }
             )
         )
     }
