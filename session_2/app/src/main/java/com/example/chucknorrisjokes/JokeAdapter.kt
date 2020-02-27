@@ -6,12 +6,12 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.joke_layout.view.*
 
-class JokeAdapter:
+class JokeAdapter(private val onBottomReached: () -> Unit = {}) :
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
 
     private val jokes: MutableList<Joke> = mutableListOf()
 
-    fun setData(data: List<Joke>){
+    fun setData(data: List<Joke>) {
         jokes.clear()
         jokes.addAll(data)
         notifyDataSetChanged()
@@ -29,5 +29,7 @@ class JokeAdapter:
 
     override fun onBindViewHolder(holder: JokeViewHolder, position: Int) {
         holder.linearLayout.joke_text.text = jokes[position].value
+        if (position == itemCount-1)
+            onBottomReached()
     }
 }

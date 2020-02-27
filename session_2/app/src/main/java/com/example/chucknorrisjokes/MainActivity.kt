@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = JokeAdapter()
+        viewAdapter = JokeAdapter { getJoke() }
 
         joke_list.apply {
             setHasFixedSize(true)
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             .doOnSubscribe {
                 progressBar.visibility = View.VISIBLE
             }
-            .repeat(10)
+            .repeat(20)
             .doAfterTerminate {
                 progressBar.visibility = View.GONE
             }
@@ -58,5 +58,4 @@ class MainActivity : AppCompatActivity() {
             )
         )
     }
-
 }
