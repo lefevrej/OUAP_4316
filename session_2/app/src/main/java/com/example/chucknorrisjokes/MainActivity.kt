@@ -17,6 +17,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewManager: RecyclerView.LayoutManager
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.dispose()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -50,6 +55,5 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        //compositeDisposable.dispose()
     }
 }
