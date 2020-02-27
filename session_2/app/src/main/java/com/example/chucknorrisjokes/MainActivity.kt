@@ -2,10 +2,10 @@ package com.example.chucknorrisjokes
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -16,6 +16,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewAdapter: JokeAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private val service: JokeApiService = JokeApiServiceFactory().createService()
+    private val jokes: MutableList<Joke> = mutableListOf()
 
     override fun onStop() {
         super.onStop()
@@ -34,26 +36,29 @@ class MainActivity : AppCompatActivity() {
             layoutManager = viewManager
             adapter = viewAdapter
         }
-
-        val jokes: MutableList<Joke> = mutableListOf()
-
-        val service = JokeApiServiceFactory().createService()
-        val singleJoke: Single<Joke> = service.giveMeAJoke()
-
         button.setOnClickListener {
-            compositeDisposable.add(singleJoke
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onError = { e -> Log.wtf("Request", e) },
-                    onSuccess = { joke: Joke ->
-                        jokes.add(joke)
-                        Log.wtf("Request", joke.value)
-                        viewAdapter.setData(jokes)
-                    }
-                )
-            )
+            getJoke()
         }
-
     }
+
+    private fun getJoke() {
+        compositeDisposable.add(service.giveMeAJoke()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                progressBar.visibility = View.VISIBLE
+            }
+            .doAfterTerminate {
+                progressBar.visibility = View.GONE
+            }
+            .subscribeBy(
+                onError = { e -> Log.wtf("Request", e) },
+                onSuccess = { joke: Joke ->
+                    jokes.add(joke)
+                    viewAdapter.setData(jokes)
+                }
+            )
+        )
+    }
+
 }
