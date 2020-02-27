@@ -1,4 +1,4 @@
-package com.example.chucknorrisjokes
+package com.lefevrej.chucknorrisjokes
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json

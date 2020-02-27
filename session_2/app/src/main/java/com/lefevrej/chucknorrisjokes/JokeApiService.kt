@@ -1,4 +1,4 @@
-package com.example.chucknorrisjokes
+package com.lefevrej.chucknorrisjokes
 
 import io.reactivex.Single
 import retrofit2.http.GET

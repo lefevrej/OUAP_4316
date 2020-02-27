@@ -1,9 +1,10 @@
-package com.example.chucknorrisjokes
+package com.lefevrej.chucknorrisjokes
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chucknorrisjokes.R
 import kotlinx.android.synthetic.main.joke_layout.view.*
 
 class JokeAdapter(private val onBottomReached: () -> Unit = {}) :
@@ -22,7 +23,9 @@ class JokeAdapter(private val onBottomReached: () -> Unit = {}) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeViewHolder {
         val linearLayout = LayoutInflater.from(parent.context)
             .inflate(R.layout.joke_layout, parent, false) as LinearLayout
-        return JokeViewHolder(linearLayout)
+        return JokeViewHolder(
+            linearLayout
+        )
     }
 
     override fun getItemCount(): Int = jokes.size

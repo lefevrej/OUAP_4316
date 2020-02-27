@@ -1,4 +1,4 @@
-package com.example.chucknorrisjokes
+package com.lefevrej.chucknorrisjokes
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
@@ -21,12 +21,33 @@ fun main() {
     println("yes")
     // serializing objects
     val jsonData =
-        json.stringify(Joke.serializer(), Joke(listOf("a", "b"),"1", "2", "3", "4", "5", "6"))
+        json.stringify(
+            Joke.serializer(),
+            Joke(
+                listOf("a", "b"),
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+            )
+        )
     // serializing lists
     val jsonList =
         json.stringify(
             Joke.serializer().list,
-            listOf(Joke(listOf("a", "b"),"1", "2", "3", "4", "5", "6"))
+            listOf(
+                Joke(
+                    listOf("a", "b"),
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6"
+                )
+            )
         )
     println(jsonData)
     println(jsonList)

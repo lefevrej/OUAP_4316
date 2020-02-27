@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="com.lefevrej.chucknorrisjokes.MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/joke_list"
@@ -19,7 +19,6 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:indeterminateTint="@color/chuck_orange"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/joke_list"

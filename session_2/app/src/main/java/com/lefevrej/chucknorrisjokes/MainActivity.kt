@@ -1,4 +1,4 @@
-package com.example.chucknorrisjokes
+package com.lefevrej.chucknorrisjokes
 
 import android.os.Bundle
 import android.util.Log
@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chucknorrisjokes.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -16,7 +17,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewAdapter: JokeAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private val service: JokeApiService = JokeApiServiceFactory().createService()
+    private val service: JokeApiService = JokeApiServiceFactory()
+        .createService()
     private val jokes: MutableList<Joke> = mutableListOf()
 
     override fun onStop() {
