@@ -3,6 +3,7 @@ package com.lefevrej.chucknorrisjokes
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,12 +33,24 @@ class MainActivity : AppCompatActivity() {
         compositeDisposable.dispose()
     }
 
+    private fun onShareClicked(id: String){
+        Log.wtf("joke_id", id)
+    }
+
+    private fun onSaveClicked(id: String, item:View){
+        Log.wtf("joke_id", id )
+        item as JokeView
+        item.isSaved = !item.isSaved
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         viewManager = LinearLayoutManager(this)
         viewAdapter = JokeAdapter { getJoke() }
+        viewAdapter.setOnShareCLickListener { id -> onShareClicked(id) }
+        viewAdapter.setOnSaveCLickListener { id, item -> onSaveClicked(id, item) }
 
         joke_list.apply {
             setHasFixedSize(true)
