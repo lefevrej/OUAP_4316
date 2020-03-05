@@ -1,10 +1,7 @@
 package com.lefevrej.chucknorrisjokes
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.joke_layout.view.*
 
 class JokeAdapter(private val onBottomReached: () -> Unit = {}) :
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
@@ -17,21 +14,18 @@ class JokeAdapter(private val onBottomReached: () -> Unit = {}) :
         notifyDataSetChanged()
     }
 
-    class JokeViewHolder(val linearLayout: LinearLayout) : RecyclerView.ViewHolder(linearLayout)
+    class JokeViewHolder(val jokeView: JokeView) : RecyclerView.ViewHolder(jokeView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeViewHolder {
-        val linearLayout = LayoutInflater.from(parent.context)
-            .inflate(R.layout.joke_layout, parent, false) as LinearLayout
-        return JokeViewHolder(
-            linearLayout
-        )
+        val jokeView = JokeView(parent.context)
+        return JokeViewHolder(jokeView)
     }
 
     override fun getItemCount(): Int = jokes.size
 
     override fun onBindViewHolder(holder: JokeViewHolder, position: Int) {
-        holder.linearLayout.joke_text.text = jokes[position].value
-        if (position == itemCount-1)
+        holder.jokeView.setUpView(JokeView.Model(jokes[position].value))
+        if (position == itemCount - 1)
             onBottomReached()
     }
 }

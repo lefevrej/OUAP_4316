@@ -47,12 +47,9 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState != null) {
             jokes.addAll(
-                savedInstanceState.getString(
-                    JOKES_KEY
-                )?.let {
+                savedInstanceState.getString(JOKES_KEY)?.let {
                     Json(JsonConfiguration.Stable).parse(
-                        Joke.serializer().list,
-                        it
+                        Joke.serializer().list, it
                     )
                 }!!
             )

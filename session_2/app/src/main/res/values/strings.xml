@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Chuck Norris Facts</string>
     <string name="chuckrris_io_logo">Chuckrris.io_logo</string>
+    <string name="jokes_value">jokes_value</string>
 </resources>
