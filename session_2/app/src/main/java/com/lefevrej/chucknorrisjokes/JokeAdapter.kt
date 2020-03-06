@@ -7,7 +7,8 @@ import java.util.*
 class JokeAdapter(
     private val onBottomReached: () -> Unit = {},
     private val onShareClickListener: (value: String) -> Unit = {},
-    private val onSaveClickListener: (id: String) -> Unit = {}
+    private val onSaveClickListener: (id: Joke, saved: Boolean) -> Unit = {_, _ ->},
+    private val savedCount: Int
 ) :
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
     private val jokes: MutableList<Joke> = mutableListOf()
@@ -31,7 +32,7 @@ class JokeAdapter(
     override fun onBindViewHolder(holder: JokeViewHolder, position: Int) {
         holder.jokeView.setUpView(
             JokeView.Model(
-                jokes[position], false,
+                jokes[position], position<savedCount,
                 onShareClickListener,
                 onSaveClickListener
             )

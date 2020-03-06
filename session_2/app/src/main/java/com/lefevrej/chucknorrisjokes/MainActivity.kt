@@ -1,5 +1,6 @@
 package com.lefevrej.chucknorrisjokes
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,8 @@ import kotlinx.serialization.list
 class MainActivity : AppCompatActivity() {
     companion object {
         const val JOKES_KEY = "JOKES_KEY"
+        const val SAVED_JOKES = "SAVED_JOKES"
+        const val SHARED_PREFS = "SHARED_PREFS"
     }
 
     private lateinit var viewAdapter: JokeAdapter
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private val service: JokeApiService = JokeApiServiceFactory()
         .createService()
     private val jokes: MutableList<Joke> = mutableListOf()
+    private val savedJokes: MutableList<Joke> = mutableListOf()
 
     override fun onStop() {
         super.onStop()
@@ -43,25 +47,35 @@ class MainActivity : AppCompatActivity() {
         startActivity(shareIntent)
     }
 
-    private fun onSaveClicked(id: String) {
-        Log.wtf("joke_id", id)
+    private fun onSaveClicked(joke: Joke, saved: Boolean) {
+        if (saved)
+            savedJokes.add(joke)
+        else
+            savedJokes.remove(joke)
+        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        val json = Json(JsonConfiguration.Stable).stringify(Joke.serializer().list, savedJokes)
+
+        Log.wtf("Save", "$saved: $json")
+        sharedPreferences.edit()
+            .putString(SAVED_JOKES, json)
+            .apply()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewManager = LinearLayoutManager(this)
-        viewAdapter = JokeAdapter(
-            { getJoke() },
-            { value -> onShareClicked(value) },
-            { id -> onSaveClicked(id) }
-        )
-
-        joke_list.apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
+        val sharedPreferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE)
+        if (sharedPreferences.contains(SAVED_JOKES)) {
+            Log.wtf("nj", sharedPreferences.getString(SAVED_JOKES, ""))
+            savedJokes.addAll(
+                sharedPreferences.getString(SAVED_JOKES, "")?.let {
+                    Json(JsonConfiguration.Stable).parse(
+                        Joke.serializer().list, it
+                    )
+                }!!
+            )
+            jokes.addAll(savedJokes)
         }
 
         if (savedInstanceState != null) {
@@ -72,10 +86,22 @@ class MainActivity : AppCompatActivity() {
                     )
                 }!!
             )
-            viewAdapter.addJokes(jokes)
             jokes.clear()
         } else
             getJoke()
+
+        viewManager = LinearLayoutManager(this)
+        viewAdapter = JokeAdapter(
+            { getJoke() },
+            { value -> onShareClicked(value) },
+            { joke, saved -> onSaveClicked(joke, saved) }, savedJokes.size
+        )
+
+        joke_list.apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
 
         val jokeTouchHelper = JokeTouchHelper(
             { position -> viewAdapter.onJokeRemoved(position) },
