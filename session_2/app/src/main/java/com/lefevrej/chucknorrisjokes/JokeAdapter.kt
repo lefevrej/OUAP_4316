@@ -1,9 +1,9 @@
 package com.lefevrej.chucknorrisjokes
 
-import android.view.View
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.joke_layout.view.*
+import java.util.*
 
 class JokeAdapter(
     private val onBottomReached: () -> Unit = {},
@@ -13,11 +13,12 @@ class JokeAdapter(
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
     private val jokes: MutableList<Joke> = mutableListOf()
 
-    fun setData(data: List<Joke>) {
-        jokes.clear()
+    fun addJokes(data: List<Joke>) {
         jokes.addAll(data)
         notifyDataSetChanged()
     }
+
+    fun getJokes(): List<Joke> = jokes
 
     class JokeViewHolder(val jokeView: JokeView) : RecyclerView.ViewHolder(jokeView)
 
@@ -31,13 +32,29 @@ class JokeAdapter(
     override fun onBindViewHolder(holder: JokeViewHolder, position: Int) {
         holder.jokeView.setUpView(
             JokeView.Model(
-                jokes[position],
-                false,
+                jokes[position], false,
                 onShareClickListener,
                 onSaveClickListener
             )
         )
         if (position == itemCount - 1)
             onBottomReached()
+    }
+
+    fun onItemMoved(from: Int, to: Int) {
+        if (from < to)
+            (from until to).forEach {
+                Collections.swap(jokes, it, it + 1)
+            }
+        else
+            (to until from).forEach {
+                Collections.swap(jokes, it, it + 1)
+            }
+        this.notifyItemMoved(from, to)
+    }
+
+    fun onJokeRemoved(position: Int) {
+        jokes.removeAt(position)
+        this.notifyItemRemoved(position)
     }
 }

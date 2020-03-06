@@ -65,15 +65,21 @@ class MainActivity : AppCompatActivity() {
                     )
                 }!!
             )
-            viewAdapter.setData(jokes)
+            viewAdapter.addJokes(jokes)
+            jokes.clear()
         } else
             getJoke()
+
+        val jokeTouchHelper = JokeTouchHelper(
+            { position -> viewAdapter.onJokeRemoved(position) },
+            { from, to -> viewAdapter.onItemMoved(from, to) })
+        jokeTouchHelper.attachToRecyclerView(joke_list)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(
             JOKES_KEY,
-            Json(JsonConfiguration.Stable).stringify(Joke.serializer().list, jokes)
+            Json(JsonConfiguration.Stable).stringify(Joke.serializer().list, viewAdapter.getJokes())
         )
         super.onSaveInstanceState(outState)
     }
@@ -92,7 +98,10 @@ class MainActivity : AppCompatActivity() {
             .subscribeBy(
                 onError = { e -> Log.wtf("Request error", e) },
                 onNext = { joke: Joke -> jokes.add(joke) },
-                onComplete = { viewAdapter.setData(jokes) }
+                onComplete = {
+                    viewAdapter.addJokes(jokes)
+                    jokes.clear()
+                }
             )
         )
     }
