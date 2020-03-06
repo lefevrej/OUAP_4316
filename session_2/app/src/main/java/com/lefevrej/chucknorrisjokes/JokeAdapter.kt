@@ -1,13 +1,12 @@
 package com.lefevrej.chucknorrisjokes
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 class JokeAdapter(
     private val onBottomReached: () -> Unit = {},
-    private val onShareClickListener: (id: String) -> Unit = {},
+    private val onShareClickListener: (value: String) -> Unit = {},
     private val onSaveClickListener: (id: String) -> Unit = {}
 ) :
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {

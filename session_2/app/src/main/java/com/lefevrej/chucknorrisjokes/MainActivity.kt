@@ -1,5 +1,6 @@
 package com.lefevrej.chucknorrisjokes
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -32,8 +33,14 @@ class MainActivity : AppCompatActivity() {
         compositeDisposable.dispose()
     }
 
-    private fun onShareClicked(id: String) {
-        Log.wtf("joke_id", id)
+    private fun onShareClicked(value: String) {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, value)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     private fun onSaveClicked(id: String) {
@@ -47,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         viewAdapter = JokeAdapter(
             { getJoke() },
-            { id -> onShareClicked(id) },
+            { value -> onShareClicked(value) },
             { id -> onSaveClicked(id) }
         )
 
