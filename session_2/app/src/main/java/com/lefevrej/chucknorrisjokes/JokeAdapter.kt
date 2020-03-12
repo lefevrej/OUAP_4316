@@ -7,14 +7,15 @@ import java.util.*
 class JokeAdapter(
     private val onBottomReached: () -> Unit = {},
     private val onShareClickListener: (value: String) -> Unit = {},
-    private val onSaveClickListener: (id: Joke, saved: Boolean) -> Unit = {_, _ ->},
-    private val savedCount: Int
+    private val onSaveClickListener: (id: Joke, saved: Boolean) -> Unit = {_, _ ->}
 ) :
     RecyclerView.Adapter<JokeAdapter.JokeViewHolder>() {
     private val jokes: MutableList<Joke> = mutableListOf()
+    private val savedState: MutableList<Boolean> = mutableListOf()
 
-    fun addJokes(data: List<Joke>) {
+    fun addJokes(data: List<Joke>, saved:Boolean=false) {
         jokes.addAll(data)
+        (0 until jokes.size).forEach { _ -> savedState.add(saved) }
         notifyDataSetChanged()
     }
 
@@ -32,7 +33,7 @@ class JokeAdapter(
     override fun onBindViewHolder(holder: JokeViewHolder, position: Int) {
         holder.jokeView.setUpView(
             JokeView.Model(
-                jokes[position], position<savedCount,
+                jokes[position], savedState[position],
                 onShareClickListener,
                 onSaveClickListener
             )
@@ -45,10 +46,12 @@ class JokeAdapter(
         if (from < to)
             (from until to).forEach {
                 Collections.swap(jokes, it, it + 1)
+                Collections.swap(savedState, it, it + 1)
             }
         else
             (to until from).forEach {
                 Collections.swap(jokes, it, it + 1)
+                Collections.swap(savedState, it, it + 1)
             }
         this.notifyItemMoved(from, to)
     }
