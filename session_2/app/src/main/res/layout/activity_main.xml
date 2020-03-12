@@ -6,23 +6,19 @@
     android:layout_height="match_parent"
     tools:context="com.lefevrej.chucknorrisjokes.MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/joke_list"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        tools:layout_editor_absoluteX="-35dp"
-        tools:layout_editor_absoluteY="123dp" />
+        android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/joke_list"
-        app:layout_constraintStart_toStartOf="@+id/joke_list"
-        app:layout_constraintTop_toTopOf="@+id/joke_list" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/joke_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            tools:layout_editor_absoluteX="-35dp"
+            tools:layout_editor_absoluteY="123dp" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

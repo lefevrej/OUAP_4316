@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private val service: JokeApiService = JokeApiServiceFactory()
         .createService()
     private val jokes: MutableList<Joke> = mutableListOf()
-    private val savedJokes: MutableList<Joke> = mutableListOf()
+    private val savedState: MutableList<Boolean> = mutableListOf()
 
     override fun onStop() {
         super.onStop()
@@ -48,17 +47,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onSaveClicked(joke: Joke, saved: Boolean) {
-        if (saved)
-            savedJokes.add(joke)
-        else
-            savedJokes.remove(joke)
+        fetchJokes()
+        savedState[jokes.indexOf(joke)] = saved
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-        val json = Json(JsonConfiguration.Stable).stringify(Joke.serializer().list, savedJokes)
+        val json = Json(JsonConfiguration.Stable).stringify(Joke.serializer().list,
+            jokes.filterIndexed { index, _ -> savedState[index] })
 
-        Log.wtf("Save", "$saved: $json")
         sharedPreferences.edit()
             .putString(SAVED_JOKES, json)
             .apply()
+
+        viewAdapter.addJokes(jokes, savedState)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,15 +84,15 @@ class MainActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE)
         if (sharedPreferences.contains(SAVED_JOKES)) {
-            Log.wtf("nj", sharedPreferences.getString(SAVED_JOKES, ""))
-            savedJokes.addAll(
+            jokes.addAll(
                 sharedPreferences.getString(SAVED_JOKES, "")?.let {
                     Json(JsonConfiguration.Stable).parse(
                         Joke.serializer().list, it
                     )
                 }!!
             )
-            viewAdapter.addJokes(savedJokes, true)
+            jokes.forEach { _ -> savedState.add(true) }
+            viewAdapter.addJokes(jokes, savedState)
         }
 
         if (savedInstanceState != null) {
@@ -108,6 +107,8 @@ class MainActivity : AppCompatActivity() {
         } else
             getJoke()
 
+        swipe.setOnRefreshListener { getJoke(false) }
+        swipe.setColorSchemeColors(getColor(R.color.colorAccent))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -118,25 +119,47 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun getJoke() {
+    private fun getJoke(fetch: Boolean = true) {
+        fetchJokes()
+        if(!fetch)
+            clearNonSavedJokes()
+
         compositeDisposable.add(service.giveMeAJoke()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
-                progressBar.visibility = View.VISIBLE
+                swipe.isRefreshing = true
             }
             .repeat(20)
             .doAfterTerminate {
-                progressBar.visibility = View.GONE
+                swipe.isRefreshing = false
             }
             .subscribeBy(
                 onError = { e -> Log.wtf("Request error", e) },
-                onNext = { joke: Joke -> jokes.add(joke) },
+                onNext = { joke: Joke ->
+                    jokes.add(joke)
+                    savedState.add(false)
+                },
                 onComplete = {
-                    viewAdapter.addJokes(jokes)
-                    jokes.clear()
+                    viewAdapter.addJokes(jokes, savedState)
                 }
             )
         )
+    }
+
+    fun fetchJokes() {
+        jokes.clear()
+        savedState.clear()
+        jokes.addAll(viewAdapter.getJokes())
+        savedState.addAll(viewAdapter.getSavedState())
+    }
+
+    fun clearNonSavedJokes(){
+        val savedJokes = mutableListOf<Joke>()
+        savedState.forEachIndexed{i, b -> if(b) savedJokes.add(jokes[i])}
+        jokes.clear()
+        jokes.addAll(savedJokes)
+        savedState.clear()
+        jokes.forEach { _ -> savedState.add(true) }
     }
 }

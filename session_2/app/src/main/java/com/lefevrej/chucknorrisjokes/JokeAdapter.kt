@@ -13,13 +13,17 @@ class JokeAdapter(
     private val jokes: MutableList<Joke> = mutableListOf()
     private val savedState: MutableList<Boolean> = mutableListOf()
 
-    fun addJokes(data: List<Joke>, saved:Boolean=false) {
+    fun addJokes(data: List<Joke>, saved: List<Boolean>) {
+        jokes.clear()
+        savedState.clear()
+
         jokes.addAll(data)
-        (0 until jokes.size).forEach { _ -> savedState.add(saved) }
+        savedState.addAll(saved)
         notifyDataSetChanged()
     }
 
     fun getJokes(): List<Joke> = jokes
+    fun getSavedState(): List<Boolean> = savedState
 
     class JokeViewHolder(val jokeView: JokeView) : RecyclerView.ViewHolder(jokeView)
 
