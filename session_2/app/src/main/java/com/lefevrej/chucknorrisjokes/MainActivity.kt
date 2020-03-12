@@ -65,6 +65,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        viewManager = LinearLayoutManager(this)
+        viewAdapter = JokeAdapter(
+            { getJoke() },
+            { value -> onShareClicked(value) },
+            { joke, saved -> onSaveClicked(joke, saved) }
+        )
+
+        joke_list.apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
+
+        val jokeTouchHelper = JokeTouchHelper(
+            { position -> viewAdapter.onJokeRemoved(position) },
+            { from, to -> viewAdapter.onItemMoved(from, to) })
+        jokeTouchHelper.attachToRecyclerView(joke_list)
+
         val sharedPreferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE)
         if (sharedPreferences.contains(SAVED_JOKES)) {
             Log.wtf("nj", sharedPreferences.getString(SAVED_JOKES, ""))
@@ -75,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 }!!
             )
-            jokes.addAll(savedJokes)
+            viewAdapter.addJokes(savedJokes, true)
         }
 
         if (savedInstanceState != null) {
@@ -90,23 +108,6 @@ class MainActivity : AppCompatActivity() {
         } else
             getJoke()
 
-        viewManager = LinearLayoutManager(this)
-        viewAdapter = JokeAdapter(
-            { getJoke() },
-            { value -> onShareClicked(value) },
-            { joke, saved -> onSaveClicked(joke, saved) }, savedJokes.size
-        )
-
-        joke_list.apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
-        }
-
-        val jokeTouchHelper = JokeTouchHelper(
-            { position -> viewAdapter.onJokeRemoved(position) },
-            { from, to -> viewAdapter.onItemMoved(from, to) })
-        jokeTouchHelper.attachToRecyclerView(joke_list)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
