@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun onSaveClicked(joke: Joke, saved: Boolean) {
         fetchJokes()
-        savedState[jokes.indexOf(joke)] = saved
+        savedState[jokes.indexOf(joke)] = !saved
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         val json = Json(JsonConfiguration.Stable).stringify(Joke.serializer().list,
             jokes.filterIndexed { index, _ -> savedState[index] })

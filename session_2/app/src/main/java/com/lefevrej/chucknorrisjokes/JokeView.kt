@@ -26,16 +26,14 @@ class JokeView @JvmOverloads constructor(
 
     fun setUpView(model: Model) {
         joke_text.text = model.joke.value
-        updateSaveSate(model.isSaved)
+        setSavedState(model.isSaved)
         share.setOnClickListener { model.onShareClickListener(model.joke.value) }
         star.setOnClickListener {
-            model.onSaveClickListener(model.joke, !model.isSaved)
-            updateSaveSate(model.isSaved)
-            setUpView(model.copy(isSaved = !model.isSaved))
+            model.onSaveClickListener(model.joke, model.isSaved)
         }
     }
 
-    private fun updateSaveSate(isSaved: Boolean) {
+    private fun setSavedState(isSaved: Boolean) {
         when (isSaved) {
             true -> star.setImageResource(R.drawable.ic_star_black_24dp)
             false -> star.setImageResource(R.drawable.ic_star_border_black_24dp)
