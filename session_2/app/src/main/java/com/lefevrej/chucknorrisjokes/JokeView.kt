@@ -21,16 +21,14 @@ class JokeView @JvmOverloads constructor(
         val joke: Joke,
         val isSaved: Boolean,
         val onShareClickListener: (value: String) -> Unit = {},
-        val onSaveClickListener: (joke: Joke, saved: Boolean) -> Unit = { _, _ -> }
+        val onSaveClickListener: (model: Model) -> Unit = {}
     )
 
     fun setUpView(model: Model) {
         joke_text.text = model.joke.value
         setSavedState(model.isSaved)
         share.setOnClickListener { model.onShareClickListener(model.joke.value) }
-        star.setOnClickListener {
-            model.onSaveClickListener(model.joke, model.isSaved)
-        }
+        star.setOnClickListener { model.onSaveClickListener(model) }
     }
 
     private fun setSavedState(isSaved: Boolean) {

@@ -3,7 +3,7 @@ package com.lefevrej.chucknorrisjokes
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-class JokeTouchHelper(
+class JokeItemTouchHelper(
     private val onJokeRemoved: (from: Int) -> Unit = {},
     private val onItemMoved: (from: Int, to: Int) -> Unit = {_, _ ->}
 ) : ItemTouchHelper(

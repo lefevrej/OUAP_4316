@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.list
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -28,8 +29,7 @@ class MainActivity : AppCompatActivity() {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val service: JokeApiService = JokeApiServiceFactory()
         .createService()
-    private val jokes: MutableList<Joke> = mutableListOf()
-    private val savedState: MutableList<Boolean> = mutableListOf()
+    private val models: MutableList<JokeView.Model> = mutableListOf()
 
     override fun onStop() {
         super.onStop()
@@ -46,18 +46,35 @@ class MainActivity : AppCompatActivity() {
         startActivity(shareIntent)
     }
 
-    private fun onSaveClicked(joke: Joke, saved: Boolean) {
-        fetchJokes()
-        savedState[jokes.indexOf(joke)] = !saved
+    private fun onSaveClicked(model: JokeView.Model) {
+        models[models.indexOf(model)] = model.copy(isSaved = !model.isSaved)
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         val json = Json(JsonConfiguration.Stable).stringify(Joke.serializer().list,
-            jokes.filterIndexed { index, _ -> savedState[index] })
+            models.filter { m -> m.isSaved }.map { it.joke })
 
         sharedPreferences.edit()
             .putString(SAVED_JOKES, json)
             .apply()
+        viewAdapter.updateData(models)
+    }
 
-        viewAdapter.addJokes(jokes, savedState)
+    fun onItemMoved(from: Int, to: Int) {
+        if (from < to)
+            (from until to).forEach {
+                Collections.swap(models, it, it + 1)
+            }
+        else
+            (to until from).forEach {
+                Collections.swap(models, it, it + 1)
+            }
+        viewAdapter.updateData(models)
+        viewAdapter.notifyItemMoved(from, to)
+    }
+
+    fun onJokeRemoved(position: Int) {
+        models.removeAt(position)
+        viewAdapter.updateData(models)
+        viewAdapter.notifyItemRemoved(position)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,11 +82,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = JokeAdapter(
-            { getJoke() },
-            { value -> onShareClicked(value) },
-            { joke, saved -> onSaveClicked(joke, saved) }
-        )
+        viewAdapter = JokeAdapter { getJoke() }
 
         joke_list.apply {
             setHasFixedSize(true)
@@ -77,53 +90,62 @@ class MainActivity : AppCompatActivity() {
             adapter = viewAdapter
         }
 
-        val jokeTouchHelper = JokeTouchHelper(
-            { position -> viewAdapter.onJokeRemoved(position) },
-            { from, to -> viewAdapter.onItemMoved(from, to) })
+        val jokeTouchHelper = JokeItemTouchHelper(
+            { position -> onJokeRemoved(position) },
+            { from, to -> onItemMoved(from, to) })
         jokeTouchHelper.attachToRecyclerView(joke_list)
 
         val sharedPreferences = getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE)
         if (sharedPreferences.contains(SAVED_JOKES)) {
-            jokes.addAll(
+            models.addAll(
                 sharedPreferences.getString(SAVED_JOKES, "")?.let {
                     Json(JsonConfiguration.Stable).parse(
                         Joke.serializer().list, it
                     )
-                }!!
+                }!!.map {
+                    JokeView.Model(it,
+                        true,
+                        { value -> onShareClicked(value) },
+                        { model -> onSaveClicked(model) })
+                }
             )
-            jokes.forEach { _ -> savedState.add(true) }
-            viewAdapter.addJokes(jokes, savedState)
+            viewAdapter.updateData(models)
         }
 
         if (savedInstanceState != null) {
-            jokes.addAll(
+            Log.wtf("Saved instance", "${savedInstanceState.getString(JOKES_KEY)}")
+            models.addAll(
                 savedInstanceState.getString(JOKES_KEY)?.let {
                     Json(JsonConfiguration.Stable).parse(
                         Joke.serializer().list, it
                     )
-                }!!
+                }!!.map {
+                    JokeView.Model(it,
+                        false,
+                        { value -> onShareClicked(value) },
+                        { model -> onSaveClicked(model) })
+                }
             )
-            jokes.clear()
+            viewAdapter.updateData(models)
         } else
             getJoke()
 
-        swipe.setOnRefreshListener { getJoke(false) }
+        swipe.setOnRefreshListener { getJoke() }
         swipe.setColorSchemeColors(getColor(R.color.colorAccent))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(
             JOKES_KEY,
-            Json(JsonConfiguration.Stable).stringify(Joke.serializer().list, viewAdapter.getJokes())
+            Json(JsonConfiguration.Stable).stringify(
+                Joke.serializer().list,
+                models.filter { m -> !m.isSaved }.map { it.joke }
+            )
         )
         super.onSaveInstanceState(outState)
     }
 
-    private fun getJoke(fetch: Boolean = true) {
-        fetchJokes()
-        if(!fetch)
-            clearNonSavedJokes()
-
+    private fun getJoke() {
         compositeDisposable.add(service.giveMeAJoke()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -137,29 +159,16 @@ class MainActivity : AppCompatActivity() {
             .subscribeBy(
                 onError = { e -> Log.wtf("Request error", e) },
                 onNext = { joke: Joke ->
-                    jokes.add(joke)
-                    savedState.add(false)
+                    models.add(JokeView.Model(joke,
+                        false,
+                        { value -> onShareClicked(value) },
+                        { model -> onSaveClicked(model) }
+                    ))
                 },
                 onComplete = {
-                    viewAdapter.addJokes(jokes, savedState)
+                    viewAdapter.updateData(models)
                 }
             )
         )
-    }
-
-    fun fetchJokes() {
-        jokes.clear()
-        savedState.clear()
-        jokes.addAll(viewAdapter.getJokes())
-        savedState.addAll(viewAdapter.getSavedState())
-    }
-
-    fun clearNonSavedJokes(){
-        val savedJokes = mutableListOf<Joke>()
-        savedState.forEachIndexed{i, b -> if(b) savedJokes.add(jokes[i])}
-        jokes.clear()
-        jokes.addAll(savedJokes)
-        savedState.clear()
-        jokes.forEach { _ -> savedState.add(true) }
     }
 }
