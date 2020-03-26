@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -109,6 +108,7 @@ class MainActivity : AppCompatActivity() {
             getJoke()
 
         swipe.setOnRefreshListener { getJoke(false) }
+        swipe.setColorSchemeColors(getColor(R.color.colorAccent))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
