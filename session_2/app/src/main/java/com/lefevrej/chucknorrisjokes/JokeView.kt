@@ -20,21 +20,19 @@ class JokeView @JvmOverloads constructor(
     data class Model(
         val joke: Joke,
         val isSaved: Boolean,
-        val onShareClickListener: (value: String) -> Unit = {},
-        val onSaveClickListener: (model: Model) -> Unit = {}
+        val onShareClickListener: (id: String) -> Unit = {},
+        val onSaveClickListener: (id: String) -> Unit = {}
     )
 
     fun setUpView(model: Model) {
         joke_text.text = model.joke.value
-        setSavedState(model.isSaved)
-        share.setOnClickListener { model.onShareClickListener(model.joke.value) }
-        star.setOnClickListener { model.onSaveClickListener(model) }
-    }
-
-    private fun setSavedState(isSaved: Boolean) {
-        when (isSaved) {
-            true -> star.setImageResource(R.drawable.ic_star_black_24dp)
-            false -> star.setImageResource(R.drawable.ic_star_border_black_24dp)
-        }
+        star.setImageResource(
+            if (model.isSaved)
+                R.drawable.ic_star_black_24dp
+            else
+                R.drawable.ic_star_border_black_24dp
+        )
+        share.setOnClickListener { model.onShareClickListener(model.joke.id) }
+        star.setOnClickListener { model.onSaveClickListener(model.joke.id) }
     }
 }
