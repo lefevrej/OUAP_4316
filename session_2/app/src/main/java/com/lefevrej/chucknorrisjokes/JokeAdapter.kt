@@ -12,7 +12,6 @@ class JokeAdapter(
     fun updateData(newModels: List<JokeView.Model>) {
         models.clear()
         models.addAll(newModels)
-        notifyDataSetChanged()
     }
 
     class JokeViewHolder(val jokeView: JokeView) : RecyclerView.ViewHolder(jokeView)

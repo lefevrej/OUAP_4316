@@ -119,8 +119,8 @@ class JokesViewModel(
     }
 
     fun onJokePositionChanged(previous: Int, target: Int) {
-        _jokes.value = _jokes.value!!.moveItem(previous, target)
         _stared.value = _stared.value!!.moveItem(previous, target)
+        _jokes.value = _jokes.value!!.moveItem(previous, target)
         _jokesSetChangedAction.value = ListAction.ItemMovedAction(previous, target)
     }
 
