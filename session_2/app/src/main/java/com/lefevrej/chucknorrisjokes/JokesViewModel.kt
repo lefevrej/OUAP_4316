@@ -40,28 +40,11 @@ class JokesViewModel(
         const val SAVED_JOKES = "SAVED_JOKES"
     }
 
-    /**
-     * Private members of type MutableLiveData.
-     * You can update a MutableLiveData value using setValue() (or postValue() if not main Thread).
-     * Belong private because only the ViewModel should be able to update its liveData.
-     *
-     * @see androidx.lifecycle.MutableLiveData
-     * @see androidx.lifecycle.LiveData#setValue()
-     * @see androidx.lifecycle.LiveData#postValue()
-     */
     private val _jokesLoadingStatus = MutableLiveData<LoadingStatus>()
     private val _jokesSetChangedAction = MutableLiveData<ListAction>()
     private val _jokes = MutableLiveData<List<Joke>>()
     private val _stared = MutableLiveData<List<Boolean>>()
-
-    /**
-     * Public members of type LiveData.
-     * This is what UI will observe and use to update views.
-     * They are built with private MutableLiveData above.
-     *
-     * @see androidx.lifecycle.LiveData
-     * @see androidx.lifecycle.Transformations
-     */
+    
     val jokesLoadingStatus: LiveData<LoadingStatus> = _jokesLoadingStatus
     val jokesSetChangedAction: LiveData<ListAction> = _jokesSetChangedAction
     val jokeModels: LiveData<List<JokeView.Model>> = Transformations.map(_jokes) {
@@ -142,10 +125,6 @@ class JokesViewModel(
         sharedPrefs.edit()
             .putString(SAVED_JOKES, json)
             .apply()
-    }
-
-    private fun onJokeUnStared(id: String) {
-        TODO("Find an utility")
     }
 
     private fun onJokeShared(id: String) {
